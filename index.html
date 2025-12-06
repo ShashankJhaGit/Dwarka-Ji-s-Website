@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To-Do List</title>
+    <title>Real Time Insider Data</title>
     <style>
         * {
             margin: 0;
@@ -12,201 +12,623 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #1a1a1a;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
         }
 
         .container {
-            background: #2d2d2d;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            padding: 40px;
-            width: 100%;
-            max-width: 500px;
-            margin-bottom: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
         }
 
         h1 {
-            color: #ffffff;
-            margin-bottom: 30px;
-            text-align: center;
-            font-size: 32px;
+            color: #666;
+            font-size: 24px;
+            font-weight: normal;
+            margin-bottom: 20px;
         }
 
-        .input-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-
-        input[type="text"] {
-            flex: 1;
-            padding: 12px 15px;
-            border: 2px solid #3d3d3d;
-            border-radius: 8px;
-            font-size: 16px;
-            outline: none;
-            transition: border-color 0.3s;
-            background: #1a1a1a;
-            color: #ffffff;
-        }
-
-        input[type="text"]:focus {
-            border-color: #667eea;
-        }
-
-        button {
-            padding: 12px 25px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        button:hover {
-            background: #5568d3;
-        }
-
-        .todo-list {
-            list-style: none;
-        }
-
-        .todo-item {
-            background: #3d3d3d;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: all 0.3s;
-        }
-
-        .todo-item:hover {
-            background: #4a4a4a;
-        }
-
-        .todo-item.completed {
-            opacity: 0.6;
-        }
-
-        .todo-item.completed .todo-text {
-            text-decoration: line-through;
-            color: #888;
-        }
-
-        input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-        }
-
-        .todo-text {
-            flex: 1;
-            color: #ffffff;
-            font-size: 16px;
-        }
-
-        .delete-btn {
-            padding: 6px 12px;
-            background: #dc3545;
-            color: white;
-            border: none;
+        .selection-panel {
+            border: 1px solid #ddd;
+            padding: 20px;
             border-radius: 5px;
-            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .selection-title {
+            color: #2196F3;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: inline-block;
+            margin-right: 15px;
+            color: #333;
+        }
+
+        .form-group input[type="radio"],
+        .form-group input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        .form-group input[type="text"] {
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            width: 60px;
+        }
+
+        .reset-btn {
+            float: right;
+            padding: 8px 20px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 3px;
             cursor: pointer;
-            transition: background 0.3s;
         }
 
-        .delete-btn:hover {
-            background: #c82333;
+        .go-btn {
+            padding: 8px 30px;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            cursor: pointer;
+            float: right;
         }
 
-        .footer {
-            color: white;
+        .summary-table {
+            float: right;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+
+        .summary-table td {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .summary-table .header-cell {
+            background-color: #f5f5f5;
+            font-weight: bold;
+        }
+
+        .buy-text {
+            color: #4CAF50;
+        }
+
+        .sell-text {
+            color: #f44336;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            clear: both;
+        }
+
+        .data-table th {
+            background-color: #f5f5f5;
+            padding: 10px;
+            text-align: left;
+            border-bottom: 2px solid #ddd;
+            color: #666;
+            font-weight: normal;
             font-size: 14px;
-            margin-top: auto;
-            padding-top: 20px;
+            position: sticky;
+            top: 0;
+        }
+
+        .data-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        .data-table tr:hover {
+            background-color: #f0f0f0;
+        }
+
+        .symbol-link {
+            color: #2196F3;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .name-link {
+            color: #2196F3;
+            text-decoration: none;
+        }
+
+        .date-link {
+            color: #2196F3;
+            text-decoration: none;
+        }
+
+        .time-text {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .sale-badge {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        .purchase-badge {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .sort-arrow {
+            color: #999;
+            font-size: 10px;
+            margin-left: 3px;
+        }
+
+        input[type="text"].symbol-input {
+            width: 300px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>My To-Do List</h1>
+        <button class="reset-btn">Reset</button>
+        <h1>Real Time Insider Transaction Data</h1>
         
-        <div class="input-container">
-            <input type="text" id="todoInput" placeholder="Add a new task...">
-            <button onclick="addTodo()">Add</button>
+        <div class="selection-panel">
+            <div class="selection-title">Selection Criteria</div>
+            
+            <div class="form-group">
+                <label style="margin-right: 20px;">Timeframe :</label>
+                <label><input type="radio" name="timeframe" checked> Day</label>
+                <label><input type="radio" name="timeframe"> Week</label>
+                <label><input type="radio" name="timeframe"> Month</label>
+                <label><input type="radio" name="timeframe"> 3 Months</label>
+                <label><input type="radio" name="timeframe"> 6 Months</label>
+                <label><input type="radio" name="timeframe"> 1 Year</label>
+                <label><input type="radio" name="timeframe"> 2 Years</label>
+            </div>
+
+            <div class="form-group">
+                <label><input type="checkbox"> Purchases only</label>
+                <label><input type="checkbox"> Sales only</label>
+            </div>
+
+            <div class="form-group">
+                <label><input type="checkbox"> 10% or greater ownership only</label>
+                <label><input type="checkbox"> Preferred Stock only</label>
+            </div>
+
+            <div class="form-group">
+                <label>Minimum transaction amount $</label>
+                <input type="text" value="0">
+            </div>
+
+            <div class="form-group">
+                <label>Symbol watch list (max. 15)</label><br>
+                <input type="text" class="symbol-input">
+                <button class="go-btn">GO</button>
+            </div>
         </div>
 
-        <ul class="todo-list" id="todoList"></ul>
-    </div>
+        <table class="summary-table">
+            <tr>
+                <td class="header-cell">Total</td>
+                <td class="header-cell">Transactions</td>
+                <td class="header-cell">Amount</td>
+            </tr>
+            <tr>
+                <td class="buy-text">Buys</td>
+                <td>102</td>
+                <td>$60,112,956</td>
+            </tr>
+            <tr>
+                <td class="sell-text">Sells</td>
+                <td>515</td>
+                <td>$1,240,468,282</td>
+            </tr>
+        </table>
 
-    <div class="footer">Made with ❤︎ by Shashank Jha</div>
-
-    <script>
-        let todos = [];
-
-        function addTodo() {
-            const input = document.getElementById('todoInput');
-            const text = input.value.trim();
-            
-            if (text === '') return;
-            
-            todos.push({
-                id: Date.now(),
-                text: text,
-                completed: false
-            });
-            
-            input.value = '';
-            renderTodos();
-        }
-
-        function toggleTodo(id) {
-            const todo = todos.find(t => t.id === id);
-            if (todo) {
-                todo.completed = !todo.completed;
-                renderTodos();
-            }
-        }
-
-        function deleteTodo(id) {
-            todos = todos.filter(t => t.id !== id);
-            renderTodos();
-        }
-
-        function renderTodos() {
-            const list = document.getElementById('todoList');
-            list.innerHTML = '';
-            
-            todos.forEach(todo => {
-                const li = document.createElement('li');
-                li.className = 'todo-item' + (todo.completed ? ' completed' : '');
-                
-                li.innerHTML = `
-                    <input type="checkbox" ${todo.completed ? 'checked' : ''} onchange="toggleTodo(${todo.id})">
-                    <span class="todo-text">${todo.text}</span>
-                    <button class="delete-btn" onclick="deleteTodo(${todo.id})">Delete</button>
-                `;
-                
-                list.appendChild(li);
-            });
-        }
-
-        document.getElementById('todoInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                addTodo();
-            }
-        });
-    </script>
-</body>
-</html>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Filing <span class="sort-arrow">▲▼</span></th>
+                    <th>Symbol <span class="sort-arrow">▲▼</span></th>
+                    <th>Security</th>
+                    <th>Reporting Name</th>
+                    <th>Relationship</th>
+                    <th>Trans. Date <span class="sort-arrow">▲▼</span></th>
+                    <th>Purchase/Sale</th>
+                    <th>Shares</th>
+                    <th>Price $ <span class="sort-arrow">▲▼</span></th>
+                    <th>Amount $ <span class="sort-arrow">▲▼</span></th>
+                    <th>D/I</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">21:45</span></td>
+                    <td><a href="#" class="symbol-link">MP</a></td>
+                    <td>MP Materials Corp</td>
+                    <td><a href="#" class="name-link">LITINSKY JAMES H.</a></td>
+                    <td>Chairman and CEO</td>
+                    <td>05 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>74,638</td>
+                    <td>63.42</td>
+                    <td>4,733,542</td>
+                    <td>I</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">21:45</span></td>
+                    <td><a href="#" class="symbol-link">MP</a></td>
+                    <td>MP Materials Corp</td>
+                    <td><a href="#" class="name-link">LITINSKY JAMES H.</a></td>
+                    <td>Chairman and CEO</td>
+                    <td>05 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>34,801</td>
+                    <td>63.11</td>
+                    <td>2,196,291</td>
+                    <td>I</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">21:45</span></td>
+                    <td><a href="#" class="symbol-link">MP</a></td>
+                    <td>MP Materials Corp</td>
+                    <td><a href="#" class="name-link">LITINSKY JAMES H.</a></td>
+                    <td>Chairman and CEO</td>
+                    <td>05 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>275,561</td>
+                    <td>62.79</td>
+                    <td>17,302,475</td>
+                    <td>I</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">21:40</span></td>
+                    <td><a href="#" class="symbol-link">IVF</a></td>
+                    <td>INVO Fertility Inc</td>
+                    <td><a href="#" class="name-link">SZOT MATTHEW K</a></td>
+                    <td>Director</td>
+                    <td>03 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>4</td>
+                    <td>1.52</td>
+                    <td>6</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">21:37</span></td>
+                    <td><a href="#" class="symbol-link">NRDS</a></td>
+                    <td>NERDWALLET Inc</td>
+                    <td><a href="#" class="name-link">TATUM NICHOLAS</a></td>
+                    <td>Chief Accounting Officer</td>
+                    <td>03 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>596</td>
+                    <td>15.93</td>
+                    <td>9,494</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">21:36</span></td>
+                    <td><a href="#" class="symbol-link">CLSK</a></td>
+                    <td>CLEANSPARK Inc</td>
+                    <td><a href="#" class="name-link">CAVALERI AMANDA</a></td>
+                    <td>Director</td>
+                    <td>04 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>33,000</td>
+                    <td>15.02</td>
+                    <td>495,660</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">21:30</span></td>
+                    <td><a href="#" class="symbol-link">TONX</a></td>
+                    <td>TON Strategy Co</td>
+                    <td><a href="#" class="name-link">CUTAIA RORY J.</a></td>
+                    <td>Director</td>
+                    <td>05 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>15,100</td>
+                    <td>309.9</td>
+                    <td>4,679,490</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">21:30</span></td>
+                    <td><a href="#" class="symbol-link">TONX</a></td>
+                    <td>TON Strategy Co</td>
+                    <td><a href="#" class="name-link">CUTAIA RORY J.</a></td>
+                    <td>Director</td>
+                    <td>04 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>37,200</td>
+                    <td>3.628</td>
+                    <td>134,962</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">21:30</span></td>
+                    <td><a href="#" class="symbol-link">TONX</a></td>
+                    <td>TON Strategy Co</td>
+                    <td><a href="#" class="name-link">CUTAIA RORY J.</a></td>
+                    <td>Director</td>
+                    <td>03 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>26,300</td>
+                    <td>3.445</td>
+                    <td>90,604</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">21:03</span></td>
+                    <td><a href="#" class="symbol-link">LINC</a></td>
+                    <td>LINCOLN EDUCATIONAL SERVICES CORP</td>
+                    <td><a href="#" class="name-link">CARNEY KEVIN M</a></td>
+                    <td>Director</td>
+                    <td>05 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>13,866</td>
+                    <td>22.18</td>
+                    <td>307,548</td>
+                    <td>I</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">21:03</span></td>
+                    <td><a href="#" class="symbol-link">LINC</a></td>
+                    <td>LINCOLN EDUCATIONAL SERVICES CORP</td>
+                    <td><a href="#" class="name-link">CARNEY KEVIN M</a></td>
+                    <td>Director</td>
+                    <td>04 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>7,604</td>
+                    <td>22.64</td>
+                    <td>172,155</td>
+                    <td>I</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">20:56</span></td>
+                    <td><a href="#" class="symbol-link">DOMH</a></td>
+                    <td>Dominari Holdings Inc</td>
+                    <td><a href="#" class="name-link">DEVALL CHRISTOPHER FRANKLIN</a></td>
+                    <td>COO</td>
+                    <td>05 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>140,000</td>
+                    <td>3.8161</td>
+                    <td>534,254</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">20:56</span></td>
+                    <td><a href="#" class="symbol-link">DOMH</a></td>
+                    <td>Dominari Holdings Inc</td>
+                    <td><a href="#" class="name-link">DEVALL CHRISTOPHER FRANKLIN</a></td>
+                    <td>COO</td>
+                    <td>04 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>40,000</td>
+                    <td>4.2137</td>
+                    <td>168,548</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">20:56</span></td>
+                    <td><a href="#" class="symbol-link">DOMH</a></td>
+                    <td>Dominari Holdings Inc</td>
+                    <td><a href="#" class="name-link">DEVALL CHRISTOPHER FRANKLIN</a></td>
+                    <td>COO</td>
+                    <td>03 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>40,000</td>
+                    <td>4.2151</td>
+                    <td>168,604</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">20:51</span></td>
+                    <td><a href="#" class="symbol-link">STOK</a></td>
+                    <td>Stoke Therapeutics Inc</td>
+                    <td><a href="#" class="name-link">TICHO BARRY</a></td>
+                    <td>CHIEF MEDICAL OFFICER</td>
+                    <td>05 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>1,989</td>
+                    <td>31.3453</td>
+                    <td>62,346</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">20:51</span></td>
+                    <td><a href="#" class="symbol-link">STOK</a></td>
+                    <td>Stoke Therapeutics Inc</td>
+                    <td><a href="#" class="name-link">TICHO BARRY</a></td>
+                    <td>CHIEF MEDICAL OFFICER</td>
+                    <td>05 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>1,673</td>
+                    <td>31.3304</td>
+                    <td>52,416</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">20:51</span></td>
+                    <td><a href="#" class="symbol-link">STOK</a></td>
+                    <td>Stoke Therapeutics Inc</td>
+                    <td><a href="#" class="name-link">TICHO BARRY</a></td>
+                    <td>CHIEF MEDICAL OFFICER</td>
+                    <td>04 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>323</td>
+                    <td>31.3164</td>
+                    <td>10,115</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">20:51</span></td>
+                    <td><a href="#" class="symbol-link">STOK</a></td>
+                    <td>Stoke Therapeutics Inc</td>
+                    <td><a href="#" class="name-link">TICHO BARRY</a></td>
+                    <td>CHIEF MEDICAL OFFICER</td>
+                    <td>04 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>1,373</td>
+                    <td>30.7635</td>
+                    <td>42,238</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">20:50</span></td>
+                    <td><a href="#" class="symbol-link">STOK</a></td>
+                    <td>Stoke Therapeutics Inc</td>
+                    <td><a href="#" class="name-link">KAYE EDWARD M. MD</a></td>
+                    <td>Director</td>
+                    <td>05 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>500</td>
+                    <td>31.846</td>
+                    <td>15,923</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">20:50</span></td>
+                    <td><a href="#" class="symbol-link">STOK</a></td>
+                    <td>Stoke Therapeutics Inc</td>
+                    <td><a href="#" class="name-link">KAYE EDWARD M. MD</a></td>
+                    <td>Director</td>
+                    <td>05 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>1,681</td>
+                    <td>31.1468</td>
+                    <td>52,358</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">20:50</span></td>
+                    <td><a href="#" class="symbol-link">STOK</a></td>
+                    <td>Stoke Therapeutics Inc</td>
+                    <td><a href="#" class="name-link">KAYE EDWARD M. MD</a></td>
+                    <td>Director</td>
+                    <td>05 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>6,367</td>
+                    <td>31.3304</td>
+                    <td>199,481</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">20:50</span></td>
+                    <td><a href="#" class="symbol-link">STOK</a></td>
+                    <td>Stoke Therapeutics Inc</td>
+                    <td><a href="#" class="name-link">KAYE EDWARD M. MD</a></td>
+                    <td>Director</td>
+                    <td>04 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>1,231</td>
+                    <td>31.3164</td>
+                    <td>38,550</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">20:50</span></td>
+                    <td><a href="#" class="symbol-link">STOK</a></td>
+                    <td>Stoke Therapeutics Inc</td>
+                    <td><a href="#" class="name-link">KAYE EDWARD M. MD</a></td>
+                    <td>Director</td>
+                    <td>04 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>5,222</td>
+                    <td>30.7635</td>
+                    <td>160,647</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">20:49</span></td>
+                    <td><a href="#" class="symbol-link">STOK</a></td>
+                    <td>Stoke Therapeutics Inc</td>
+                    <td><a href="#" class="name-link">ALLAN JONATHAN</a></td>
+                    <td>GENERAL COUNSEL & CORP SEC</td>
+                    <td>05 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>2,344</td>
+                    <td>31.7597</td>
+                    <td>74,445</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">20:49</span></td>
+                    <td><a href="#" class="symbol-link">STOK</a></td>
+                    <td>Stoke Therapeutics Inc</td>
+                    <td><a href="#" class="name-link">ALLAN JONATHAN</a></td>
+                    <td>GENERAL COUNSEL & CORP SEC</td>
+                    <td>05 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>5,437</td>
+                    <td>31.0828</td>
+                    <td>168,997</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">20:49</span></td>
+                    <td><a href="#" class="symbol-link">STOK</a></td>
+                    <td>Stoke Therapeutics Inc</td>
+                    <td><a href="#" class="name-link">ALLAN JONATHAN</a></td>
+                    <td>GENERAL COUNSEL & CORP SEC</td>
+                    <td>05 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>1,004</td>
+                    <td>31.3304</td>
+                    <td>31,456</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">20:49</span></td>
+                    <td><a href="#" class="symbol-link">STOK</a></td>
+                    <td>Stoke Therapeutics Inc</td>
+                    <td><a href="#" class="name-link">ALLAN JONATHAN</a></td>
+                    <td>GENERAL COUNSEL & CORP SEC</td>
+                    <td>04 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>194</td>
+                    <td>31.3164</td>
+                    <td>6,075</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">20:49</span></td>
+                    <td><a href="#" class="symbol-link">STOK</a></td>
+                    <td>Stoke Therapeutics Inc</td>
+                    <td><a href="#" class="name-link">ALLAN JONATHAN</a></td>
+                    <td>GENERAL COUNSEL & CORP SEC</td>
+                    <td>04 Dec 2025</td>
+                    <td><span class="sale-badge">Sale</span></td>
+                    <td>824</td>
+                    <td>30.7635</td>
+                    <td>25,349</td>
+                    <td>D</td>
+                </tr>
+                <tr>
+                    <td><a href="#" class="date-link">05 Dec 2025</a> <span class="time-text">20:47</span></td>
+                    <td><a href="#" class="symbol-link">SHC</a></td>
+                    <td>
